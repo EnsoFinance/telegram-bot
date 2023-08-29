@@ -30,14 +30,14 @@ Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 ## Bot commands
 `/start`: lists all resources and welcome message  
 `/help`:  command to query information about projects including, protocol list, pool list and apy  
-`/initialize`
-`/route`: execute swaps, deposits, farming and so forth
-    `single`: route from 1 token to 1 token 
-    `batch`: route from 1 token to N
-`/projects`: query information about projects including, protocol list, pool list and apy
-    `list`: list all projects available through Enso
-    `pools`: list all pools for a project with Symbol, APY, TVL, and Address
-    `apy`: fetch apy for a specific pool
+`/initialize`  
+`/route`: execute swaps, deposits, farming and so forth  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`single`: route from 1 token to 1 token  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`batch`: route from 1 token to N  
+`/projects`: query information about projects including, protocol list, pool list and apy  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`list`: list all projects available through Enso  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`pools`: list all pools for a project with Symbol, APY, TVL, and Address  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`apy`: fetch apy for a specific pool  
 
 
 ## Challenges
