@@ -2,13 +2,13 @@
 Today we will be leveraging the Enso API for building a DeFi telegram information and execution bot.
 
 ## Enso Overview
-The Enso API not only offers you all metadata such as apy, tvl, addresses, underlying tokens, logos, urls, and so forth.  It also offers you execution into DeFi protocols for actions like: 
-    1. farming
-    2. lending
-    3. borrowing
-    4. liquidity provisioning
-    5. farming
-    6. and much more
+The Enso API not only offers you all metadata such as apy, tvl, addresses, underlying tokens, logos, urls, and so forth.  It also offers you execution into DeFi protocols for actions like:  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. farming  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. lending  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. borrowing  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. liquidity provisioning  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. farming  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. and much more  
 
 You can do native transaction bundling as well, i.e. enter 50 defi positions in one transaction.  
 Compatible with gnosis safe, and any smart wallet that enables delegatecall..
@@ -16,12 +16,12 @@ Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 ## Prerequisites
 1. Fork this repo
 2. copy .env.example into .env
-3. Generate [telegram bot key](https://t.me/BotFather)
-   1. run `/newbot`
-   2. input a unique name
-   3. copy you're API key and put inside of [.env](.env)
-   4. message your bot `@your_bot_handle`
-   5. press `/start`
+3. Generate [telegram bot key](https://t.me/BotFather)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. run `/newbot`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. input a unique name  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. copy you're API key and put inside of [.env](.env)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. message your bot `@your_bot_handle`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. press `/start`  
    
 ## FAQ
 1. We will be using the Enso Smart wallet today, and all funds will be stored inside of this... unless you reach the extra challenges
@@ -142,7 +142,7 @@ For example
 Enable one call to withdraw all funds from the Smart Wallet to designated address passed in.
 
 ### Gigabrain 
-If you do this within this dedicated workshop... wow.. impressive srsly.  You can have a full crate of beer, and a job interview at Enso.
+If you do this within this dedicated workshop... wow.. impressive srsly.
 
 #### 1. Full cycle deployment
 Other "defi bots" have a centralization risk of exposing private keys and so forth.  Time to crack open that second beer and lets harness the full power of Smart Wallets, account abstraction and so forth.
