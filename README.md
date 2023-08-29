@@ -15,10 +15,11 @@ Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 
 ## Prerequisites
 1. Fork this repo
-2. Generate [telegram bot key](https://t.me/BotFather)
+2. copy .env.example into .env
+3. Generate [telegram bot key](https://t.me/BotFather)
    1. run `/newbot`
    2. input a unique name
-   3. copy you're API key and put inside of .env
+   3. copy you're API key and put inside of [.env](.env)
    4. message your bot `@your_bot_handle`
    5. press `/start`
    
@@ -26,6 +27,7 @@ Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 ## Bot commands
 `/start`: lists all resources and welcome message  
 `/help`:  command to query information about projects including, protocol list, pool list and apy  
+`/initialize`
 `/route`: execute swaps, deposits, farming and so forth
     `single`: route from 1 token to 1 token 
     `batch`: route from 1 token to N

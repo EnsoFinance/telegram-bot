@@ -135,7 +135,7 @@ bot.command("projects", async (ctx) => {
 });
 
 bot.command("easteregg", async (ctx) => {
-    await ctx.conversation.enter("youwerentmeanttofindthis");
+    await ctx.conversation.enter("dontlookatthisfunction");
 });
 
 
