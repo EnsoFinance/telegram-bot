@@ -49,7 +49,7 @@ ENSO API offers metadata
 [swagger](https://api.enso.finance/api#/metadata/DefiTokensController_defiTokens)  
 [official docs](https://docs.enso.finance/metadata-api/introduction)  
 
-#### Fetch all projects
+#### 1. Fetch all projects
 Extend the `getDeFiTokens` inside of [./api/enso.ts](./api/enso.ts)  
 ```javascript
 export async function getDefiTokens() {
@@ -59,7 +59,7 @@ export async function getDefiTokens() {
 
 ```
 
-#### Fetch pools related to a project
+#### 2. Fetch pools related to a project
 Extend the `getPools` inside of [./api/enso.ts](./api/enso.ts)  
 ```javascript
 export async function getPools(project: string) {
@@ -75,7 +75,7 @@ export async function getPools(project: string) {
 }
 ```
 
-#### Fetch APY related to a specific pool
+#### 3. Fetch APY related to a specific pool
 Extend the `getPoolApy` inside of [./api/enso.ts](./api/enso.ts)  
 ```javascript
 export async function getPoolApy(poolAddress: string) {
@@ -86,7 +86,7 @@ export async function getPoolApy(poolAddress: string) {
 }
 ```
 
-#### Fetch balance of wallet
+#### 4. Fetch balance of wallet
 ENSO API offers execution known as `shortcuts`  
 [swagger](https://api.enso.finance/api#/)  
 [official docs: router](https://docs.enso.finance/router-api/introduction)  
@@ -94,7 +94,7 @@ ENSO API offers execution known as `shortcuts`
 
 ### Execution
 
-#### Deposit into DeFi farm
+#### 1. Deposit into DeFi farm
 Extend the `getRoute` inside of [./api/enso.ts](./api/enso.ts)  
 ```javascript
 export async function getRoute(tokenIn: string, toToken: string, amountIn: number){
@@ -104,7 +104,7 @@ export async function getRoute(tokenIn: string, toToken: string, amountIn: numbe
 }
 ```
 
-#### Deposit into many DeFi farms in 1 tx
+#### 2. Deposit into many DeFi farms in 1 tx
 Extend the `getRouteBundle` inside of [./api/enso.ts](./api/enso.ts)  
 ```javascript
 export async function getRouteBundle(tokenIn: string, toToken: string[], amountIn: number) {
@@ -122,7 +122,7 @@ export async function getRouteBundle(tokenIn: string, toToken: string[], amountI
 
 ### Metadata
 
-#### Enable symbol querying
+#### 1. Enable symbol querying
 Not knowing addresses is common.  
 Enable interaction within `getRoute`, `getRouteBundle`, and `getPoolApy`.. and if there is any more.  
 For example
@@ -131,20 +131,20 @@ For example
     "stecrv": "0x06325440D014e39736583c165C2963BA99fAf14E"
 ```
 
-#### Top 10 APY per underlying
+#### 2. Top 10 APY per underlying
 1. Fetch all the underlying tokens, and then enable users to define the tokens they want exposure to.  
    1. You can view this as an information intent: `Find me the top 10 best APY with exposure to stETH, and ETH`
 2. Enable execution
 
 ### Execution
 
-#### Emergency withdrawal
+#### 1. Emergency withdrawal
 Enable one call to withdraw all funds from the Smart Wallet to designated address passed in.
 
 ### Gigabrain 
 If you do this within this dedicated workshop... wow.. impressive srsly.  You can have a full crate of beer, and a job interview at Enso.
 
-#### Full cycle deployment
+#### 1. Full cycle deployment
 Other "defi bots" have a centralization risk of exposing private keys and so forth.  Time to crack open that second beer and lets harness the full power of Smart Wallets, account abstraction and so forth.
 
 1. When `/start` enable user to click link to url
