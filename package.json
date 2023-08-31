@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "bot.js",
-  "dependencies": {
-    "grammy": "^1.18.1",
-    "ts-node": "^10.9.1"
+  "scripts": {
+    "bot": "ts-node-dev ./botter.ts"
   },
-  "devDependencies": {
+  "dependencies": {
     "@grammyjs/conversations": "^1.1.2",
     "@grammyjs/menu": "^1.2.1",
     "@roziscoding/grammy-autoquote": "^1.1.2",
@@ -15,14 +14,12 @@
     "axios": "^1.5.0",
     "cross-fetch": "^4.0.0",
     "dotenv": "^16.3.1",
-    "ethers": "^6.7.1",
-    "fetch": "^1.1.0",
-    "node-fetch": "^3.3.2",
+    "grammy": "^1.18.1",
     "typescript": "^5.2.2"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0"
+  }
 }
