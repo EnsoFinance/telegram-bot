@@ -6,13 +6,10 @@ TODO:
 1. pass inside the params into one call instead of constantly rewriting the query
 */
 
-export async function getRoute(
-  tokenIn: string,
-  toToken: string,
-  amountIn: number
-) {
-  const query = `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045&amountIn=${amountIn}&slippage=300&tokenIn=${tokenIn}&tokenOut=${toToken}`;
-  const response = await fetch(query);
+export async function getRoute(toToken: string, amountIn: string) {
+  const response = await fetch(
+    `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045&amountIn=${amountIn}&slippage=300&tokenIn=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&tokenOut=${toToken}`
+  );
   return await response.json();
 }
 
@@ -63,11 +60,7 @@ export async function getDefiBalance(walletAddress: string) {
 }
 
 // Not working
-export async function getRouteBundle(
-  tokenIn: string,
-  toToken: string[],
-  amountIn: number
-) {
+export async function getRouteBundle(toToken: string[], amountIn: number) {
   const query = `https://api.enso.finance/api/v1/shortcuts/bundle?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045`;
   const amountSplit = (amountIn / toToken.length).toString();
   console.log(amountSplit);

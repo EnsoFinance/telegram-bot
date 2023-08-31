@@ -27,7 +27,7 @@ interface Route {
   routeTo: string;
 }
 
-bot.use(session({ initial }));
+bot.use(session({ initial: (): SessionData => ({ routes: [] }) }));
 bot.use(conversations());
 
 async function route(conversation: MyConversation, ctx: MyContext) {
@@ -37,13 +37,9 @@ async function route(conversation: MyConversation, ctx: MyContext) {
       reply_markup: { force_reply: true },
     }
   );
-  // Ask user for input on token in and token out
+  // Ask user for input on amount in and token out
   const type = await conversation.wait();
-  await ctx.reply("Token to route from?", {
-    reply_markup: { force_reply: true },
-  });
-  const tokenIn = await conversation.wait();
-  await ctx.reply("Amount token from?", {
+  await ctx.reply("Ether amount in?", {
     reply_markup: { force_reply: true },
   });
   const amountIn = await conversation.wait();
@@ -57,22 +53,14 @@ async function route(conversation: MyConversation, ctx: MyContext) {
     // Make api call to enso, abstractions inside of ./api/enso.ts
     response = await conversation.external(() =>
       enso.getRoute(
-        tokenIn.message!.text!,
         tokenOut.message!.text!,
-        Number(amountIn.message?.text)
+        (10n ** 18n * BigInt(amountIn.message?.text!)).toString()
       )
     );
     // Reply to user with api response
-    await ctx.reply(
-      "Token in: " +
-        tokenIn.message?.text +
-        "\n Amount in: " +
-        amountIn.message?.text +
-        "\n Token out: " +
-        tokenOut.message?.text +
-        " \n Amount out:" +
-        response.amountOut
-    );
+    await ctx.reply(`Ether amount in: ${amountIn.message?.text}
+    Token out: ${tokenOut.message?.text}
+    Raw amount out: ${response.amountOut}`);
   } else if (type.message?.text === "batch") {
     await ctx.reply("Tokens to route to? (separate by comma)", {
       reply_markup: { force_reply: true },
@@ -80,7 +68,6 @@ async function route(conversation: MyConversation, ctx: MyContext) {
     const tokenOut = await conversation.wait();
     response = await conversation.external(() =>
       enso.getRouteBundle(
-        tokenIn.message!.text!,
         tokenOut.message!.text!.split(","),
         Number(amountIn.message?.text)
       )
@@ -204,10 +191,4 @@ bot.command("start", async (ctx) => {
 });
 
 bot.start();
-
 console.log("Bot is running...");
-
-function initial(): SessionData {
-  console.log("initial");
-  return { routes: [] };
-}
