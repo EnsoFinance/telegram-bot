@@ -6,12 +6,38 @@ TODO:
 1. pass inside the params into one call instead of constantly rewriting the query
 */
 
-export async function getRoute(toToken: string, amountIn: string) {
+export async function getRoute(toToken: string, amountIn: BigInt) {
   const response = await fetch(
-    `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045&amountIn=${amountIn}&slippage=300&tokenIn=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&tokenOut=${toToken}`
+    `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045&amountIn=${amountIn.toString()}&slippage=300&tokenIn=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&tokenOut=${toToken}`
   );
+  console.log("Single response:", response);
   if (response.status !== axios.HttpStatusCode.Ok) throw "Route failed!";
-  return await response.json();
+  return response.json();
+}
+
+export async function getRouteBundle(toTokens: string[], amountIn: BigInt) {
+  const query = `https://api.enso.finance/api/v1/shortcuts/bundle?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045`;
+  const amountSplit = (
+    BigInt(amountIn.toString()) / BigInt(toTokens.length)
+  ).toString();
+  const data = toTokens.map((token) => ({
+    protocol: "enso",
+    action: "route",
+    args: {
+      tokenIn: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      tokenOut: token,
+      amountIn: amountSplit,
+    },
+  }));
+  const response = await axios.post(query, data, {
+    headers: {
+      Authorization: "Bearer 1e02632d-6feb-4a75-a157-documentation",
+    },
+  });
+
+  console.log("Batch response: ", response);
+  if (response.status !== axios.HttpStatusCode.Ok) throw "Route failed!";
+  return response.data;
 }
 
 export async function getProjects() {

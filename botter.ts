@@ -35,28 +35,73 @@ async function route(conversation: MyConversation, ctx: MyContext) {
     reply_markup: { force_reply: true },
   });
   const amountIn = await conversation.wait();
-  await ctx.reply("Token to route to?", {
-    reply_markup: { force_reply: true },
-  });
-  const tokenOut = await conversation.wait();
+  await ctx.reply(
+    "📝 OPTIONS: \n single: route from Ether to 1 token \n batch: route from Ether to N tokens",
+    {
+      reply_markup: { force_reply: true },
+    }
+  );
+  // Ask user for input on amount in and token out
+  const type = await conversation.wait();
+  // Single token route
   let response;
-  try {
-    response = await conversation.external(() =>
-      enso.getRoute(
-        tokenOut.message!.text!,
-        (10n ** 18n * BigInt(amountIn.message?.text!)).toString()
-      )
-    );
-    // Reply to user with api response
-    await ctx.reply(`- Ether amount in: ${amountIn.message?.text}
+  if (type.message?.text === "single") {
+    await ctx.reply("Token to route to?", {
+      reply_markup: { force_reply: true },
+    });
+    const tokenOut = await conversation.wait();
+    let response;
+    try {
+      response = await conversation.external(() =>
+        enso.getRoute(
+          tokenOut.message!.text!,
+          10n ** 18n * BigInt(amountIn.message?.text!)
+        )
+      );
+      // Reply to user with api response
+      await ctx.reply(`- Ether amount in: ${amountIn.message?.text}
 - Token out: ${tokenOut.message?.text}
 - Raw amount out: ${response.amountOut}`);
-  } catch (e) {
-    await ctx.reply(`Route failed for:
+    } catch (e) {
+      await ctx.reply(`Route failed for:
 - Ether amount in: ${amountIn.message?.text}
 - Token out: ${tokenOut.message?.text}
 
 Please try /route command again`);
+      return;
+    }
+  } else if (type.message?.text === "batch") {
+    await ctx.reply("Tokens to route to? (separate by comma)", {
+      reply_markup: { force_reply: true },
+    });
+    const tokensOut = await conversation.wait();
+    const tokensOutArray = tokensOut
+      .message!.text!.replace(/ /g, "")
+      .split(",");
+    const tokensOutArrayPrettyString = tokensOutArray
+      .map((out) => `\n\t\t-> ${out}`)
+      .join("");
+    try {
+      response = await conversation.external(() =>
+        enso.getRouteBundle(
+          tokensOutArray,
+          10n ** 18n * BigInt(amountIn.message?.text!)
+        )
+      );
+      // Reply to user with api response
+      await ctx.reply(`- Ether amount in: ${amountIn.message?.text}
+- Tokens out: ${tokensOutArrayPrettyString}
+- Route: ${JSON.stringify(response.bundle, null, 2)}`);
+    } catch (e) {
+      await ctx.reply(`Route failed for:
+- Ether amount in: ${amountIn.message?.text}
+- Tokens out: ${tokensOutArrayPrettyString}
+
+Please try /route command again`);
+      return;
+    }
+  } else {
+    await ctx.reply("not an option");
     return;
   }
   await ctx.reply("Execute? yes OR no", {
