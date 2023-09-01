@@ -10,6 +10,7 @@ export async function getRoute(toToken: string, amountIn: string) {
   const response = await fetch(
     `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045&amountIn=${amountIn}&slippage=300&tokenIn=0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee&tokenOut=${toToken}`
   );
+  if (response.status !== axios.HttpStatusCode.Ok) throw "Route failed!";
   return await response.json();
 }
 
@@ -57,40 +58,6 @@ export async function getDefiBalance(walletAddress: string) {
   const data = `https://api.enso.finance/api/v1/wallet/balances?chainId=1&eoaAddress=${walletAddress}&tokenType=defiTokens`;
   const response = await fetch(data);
   return await response.json();
-}
-
-// Not working
-export async function getRouteBundle(toToken: string[], amountIn: number) {
-  const query = `https://api.enso.finance/api/v1/shortcuts/bundle?chainId=1&fromAddress=0xd8da6bf26964af9d7eed9e03e53415d37aa96045`;
-  const amountSplit = (amountIn / toToken.length).toString();
-  console.log(amountSplit);
-  var data = [
-    {
-      protocol: "enso",
-      action: "route",
-      args: {
-        tokenIn: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        tokenOut: "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
-        amountIn: amountSplit,
-      },
-    },
-    {
-      protocol: "enso",
-      action: "route",
-      args: {
-        tokenIn: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        tokenOut: "0xdf0770dF86a8034b3EFEf0A1Bb3c889B8332FF56",
-        amountIn: amountSplit,
-      },
-    },
-  ];
-
-  const response = await axios.post(query, data, {
-    headers: {
-      Authorization: "Bearer 1e02632d-6feb-4a75-a157-documentation",
-    },
-  });
-  console.log(response);
 }
 
 function uniqueArray(unparsedArray: string[]) {
