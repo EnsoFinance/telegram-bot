@@ -27,7 +27,7 @@ export async function simulate(
 
   const opts = {
     headers: {
-      "X-Access-Key": "TENDERLY_ACCESS_TOKEN",
+      "X-Access-Key": TENDERLY_ACCESS_TOKEN,
     },
   };
   const resp = await axios.post(SIMULATE_URL, transaction, opts);
