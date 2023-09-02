@@ -1,5 +1,9 @@
 import axios from "axios";
 import { BigNumberish } from "ethers";
+import dotenv from "dotenv";
+
+dotenv.config();
+const { TENDERLY_ACCESS_TOKEN } = process.env;
 
 const SIMULATE_URL =
   "https://api.tenderly.co/api/v1/account/enso-finance/project/enso-shortcuts/simulate";
@@ -23,8 +27,7 @@ export async function simulate(
 
   const opts = {
     headers: {
-      // Token will be invalid after 01.09.2023
-      "X-Access-Key": "nhpAm5C6ip56u1GHKRqetZjPnFfqWJDc",
+      "X-Access-Key": "TENDERLY_ACCESS_TOKEN",
     },
   };
   const resp = await axios.post(SIMULATE_URL, transaction, opts);
