@@ -153,41 +153,8 @@ async function projects(conversation: MyConversation, ctx: MyContext) {
   }
 }
 
-async function dontlookatthisfunction(
-  conversation: MyConversation,
-  ctx: MyContext
-) {
-  // Don't look at this code, it's not for you
-  await ctx.reply("📝 OPTIONS: \n beer \n sticker \n hack", {
-    reply_markup: { force_reply: true },
-  });
-  // Wait what you're still looking?
-  const type = await conversation.wait();
-  // Ok fine, you can look at this code, but don't tell anyone
-  if (type.message?.text === "beer") {
-    await ctx.reply("nice, you can get a beer - let us know");
-  } else if (type.message?.text === "sticker") {
-    await ctx.reply("nice, you can get a sticker - let us know");
-  } else if (type.message?.text === "hack") {
-    await ctx.reply(
-      "if you want to use enso api in the hackathon, you can let us know and we will support you!"
-    );
-  } else if (type.message?.text === "enso") {
-    await ctx.reply("nice you can get a beer and sticker!!!");
-  } else if (type.message?.text === "3301") {
-    // Since you're still reading... here's a secret
-    await ctx.reply(
-      "decode this: zeyd ekh udie qfy whekf(xjjfi://j.cu/udie_qfy)"
-    );
-    // Do you remember the initial clues? Beer, Hack, Enso, 3301, and Caesar?
-  } else {
-    await ctx.reply("ahhh that's no fun, try again");
-  }
-}
-
 bot.use(createConversation(route));
 bot.use(createConversation(projects));
-bot.use(createConversation(dontlookatthisfunction));
 
 bot.command("route", async (ctx) => {
   await ctx.conversation.enter("route");
@@ -195,10 +162,6 @@ bot.command("route", async (ctx) => {
 
 bot.command("projects", async (ctx) => {
   await ctx.conversation.enter("projects");
-});
-
-bot.command("easteregg", async (ctx) => {
-  await ctx.conversation.enter("dontlookatthisfunction");
 });
 
 bot.command("help", async (ctx) => {
@@ -211,12 +174,6 @@ bot.command("start", async (ctx) => {
   await ctx.reply(
     "Welcome to the ETHWarsaw Enso Workshop 🚀, we're happy you're here☺️ \n\n ------Resources------\n  Github: \n API Docs: https://docs.enso.finance/ \n Swagger: https://api.enso.finance/api#/ \n Examples Repo: https://github.com/EnsoFinance/shortcuts-api-examples \n\n ------Assistance------ \n Telegram support: https://t.me/+JcHXYLOMDUo4NWQ0 \n In person: just call us over we don't bite🤓"
   );
-
-  /*
-        TODO:
-            - Initialize wallet
-            - Initialize tenderly fork
-    */
 });
 
 bot.start();
