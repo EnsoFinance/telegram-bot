@@ -50,7 +50,7 @@ ENSO API offers metadata
 [official docs](https://docs.enso.finance/metadata-api/introduction)  
 
 #### 1. Fetch all projects
-Extend the `getDeFiTokens` inside of [./api/enso.ts](./api/enso.ts)  
+Extend the `getDeFiTokens` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getDefiTokens() {
     const data = `xxxxxxx`
@@ -60,7 +60,7 @@ export async function getDefiTokens() {
 ```
 
 #### 2. Fetch pools related to a project
-Extend the `getPools` inside of [./api/enso.ts](./api/enso.ts)  
+Extend the `getPools` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getPools(project: string) {
     var pools = [['Pool Name | APY | TVL | Pool Address']]
@@ -76,7 +76,7 @@ export async function getPools(project: string) {
 ```
 
 #### 3. Fetch APY related to a specific pool
-Extend the `getPoolApy` inside of [./api/enso.ts](./api/enso.ts)  
+Extend the `getPoolApy` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getPoolApy(poolAddress: string) {
     const data = `xxxx`
@@ -95,7 +95,7 @@ ENSO API offers execution known as `shortcuts`
 ### Execution
 
 #### 1. Deposit into DeFi farm
-Extend the `getRoute` inside of [./api/enso.ts](./api/enso.ts)  
+Extend the `getRoute` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getRoute(tokenIn: string, toToken: string, amountIn: number){
     const query = `xxxx`
@@ -105,7 +105,7 @@ export async function getRoute(tokenIn: string, toToken: string, amountIn: numbe
 ```
 
 #### 2. Deposit into many DeFi farms in 1 tx
-Extend the `getRouteBundle` inside of [./api/enso.ts](./api/enso.ts)  
+Extend the `getRouteBundle` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getRouteBundle(tokenIn: string, toToken: string[], amountIn: number) {
     const query = `xxx`

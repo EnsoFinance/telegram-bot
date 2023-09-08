@@ -47,7 +47,7 @@ export async function getRouteBundle(toTokens: string[], amountIn: BigNumber) {
     return response;
   } catch (e) {
     if (e instanceof AxiosError)
-      throw `Bundle failed: ${JSON.stringify(e.response)}`;
+      throw `Bundle failed: ${JSON.stringify(e.response?.data)}`;
     else throw e;
   }
 }
