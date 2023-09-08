@@ -6,8 +6,9 @@ import {
   conversations,
   createConversation,
 } from "@grammyjs/conversations";
-import * as enso from "./api/enso";
-import * as tenderly from "./api/tenderly";
+import { BigNumber, utils } from "ethers";
+import * as enso from "./enso";
+import * as safe from "./safe";
 
 dotenv.config();
 const { BOT_TOKEN } = process.env;
@@ -31,47 +32,79 @@ bot.use(session({ initial: (): SessionData => ({ routes: [] }) }));
 bot.use(conversations());
 
 async function route(conversation: MyConversation, ctx: MyContext) {
-  await ctx.reply("Ether amount in?", {
+  // ask for amount
+  await ctx.reply("💵 Ether amount in?", {
     reply_markup: { force_reply: true },
   });
-  const amountIn = await conversation.wait();
+  let amountIn: string = "";
+  let parsedAmountIn: BigNumber = BigNumber.from(0);
+  while (!parsedAmountIn.gt(0))
+    try {
+      amountIn = (await conversation.wait()).message!.text!;
+      parsedAmountIn = utils.parseEther(amountIn);
+    } catch (e) {
+      await ctx.reply(
+        `🚨 Invalid Ether amount _${amountIn}_, please respond with a valid amount`,
+        { parse_mode: "Markdown" }
+      );
+    }
+
+  // ask for type
   await ctx.reply(
-    "📝 OPTIONS: \n single: route from Ether to 1 token \n batch: route from Ether to N tokens",
+    "📝 OPTIONS: \n- *single*: route from Ether to 1 token \n- *batch*: route from Ether to N tokens",
     {
       reply_markup: { force_reply: true },
+      parse_mode: "Markdown",
     }
   );
-  // Ask user for input on amount in and token out
-  const type = await conversation.wait();
-  // Single token route
+  let type;
+  while (!type) {
+    type = (await conversation.wait()).message?.text!;
+    if (!["single", "batch"].includes(type)) {
+      await ctx.reply(
+        `🚨 Invalid option _${type}_, please respond with "single" or "batch"`,
+        { parse_mode: "Markdown" }
+      );
+      type = undefined;
+    }
+  }
+
   let response;
-  if (type.message?.text === "single") {
-    await ctx.reply("Token to route to?", {
+  // single token route
+  if (type === "single") {
+    await ctx.reply("↪ Token to route to?", {
       reply_markup: { force_reply: true },
     });
     const tokenOut = await conversation.wait();
-    let response;
+    await ctx.reply("⏳ Fetching route...");
     try {
       response = await conversation.external(() =>
-        enso.getRoute(
-          tokenOut.message!.text!,
-          10n ** 18n * BigInt(amountIn.message?.text!)
-        )
+        enso.getRoute(tokenOut.message!.text!, parsedAmountIn)
       );
       // Reply to user with api response
-      await ctx.reply(`- Ether amount in: ${amountIn.message?.text}
-- Token out: ${tokenOut.message?.text}
-- Raw amount out: ${response.amountOut}`);
+      await ctx.reply(
+        `- Ether amount in: *${amountIn}*
+- Token out: *${tokenOut.message?.text}*
+- Raw amount out: *${response.amountOut}*`,
+        { parse_mode: "Markdown" }
+      );
     } catch (e) {
-      await ctx.reply(`Route failed for:
-- Ether amount in: ${amountIn.message?.text}
-- Token out: ${tokenOut.message?.text}
+      console.log("ERROR 🚨", e);
+      await ctx.reply(
+        `🚨 Route failed for:
+- Ether amount in: *${amountIn}*
+- Token out: *${tokenOut.message?.text}*
 
-Please try /route command again`);
+Please try /route command again`,
+        { parse_mode: "Markdown" }
+      );
       return;
     }
-  } else if (type.message?.text === "batch") {
-    await ctx.reply("Tokens to route to? (separate by comma)", {
+  }
+
+  // multi token route
+  else {
+    await ctx.reply("↪ Tokens to route to? (separate by comma)", {
       reply_markup: { force_reply: true },
     });
     const tokensOut = await conversation.wait();
@@ -79,46 +112,63 @@ Please try /route command again`);
       .message!.text!.replace(/ /g, "")
       .split(",");
     const tokensOutArrayPrettyString = tokensOutArray
-      .map((out) => `\n\t\t-> ${out}`)
+      .map((out) => `\n\t\t-> <b>${out}</b>`)
       .join("");
+    await ctx.reply("⏳ Fetching route...");
     try {
       response = await conversation.external(() =>
-        enso.getRouteBundle(
-          tokensOutArray,
-          10n ** 18n * BigInt(amountIn.message?.text!)
-        )
+        enso.getRouteBundle(tokensOutArray, parsedAmountIn)
       );
       // Reply to user with api response
-      await ctx.reply(`- Ether amount in: ${amountIn.message?.text}
+      await ctx.reply(
+        `- Ether amount in: <b>${amountIn}</b>
 - Tokens out: ${tokensOutArrayPrettyString}
-- Route: ${JSON.stringify(response.bundle, null, 2)}`);
+- Route:
+<pre language="json">${JSON.stringify(response.bundle, null, 2)}</pre>`,
+        { parse_mode: "HTML" }
+      );
     } catch (e) {
-      await ctx.reply(`Route failed for:
-- Ether amount in: ${amountIn.message?.text}
+      console.log("ERROR 🚨", e);
+      await ctx.reply(
+        `🚨 Route failed for:
+- Ether amount in: <b>${amountIn}</b>
 - Tokens out: ${tokensOutArrayPrettyString}
 
-Please try /route command again`);
+Please try /route command again`,
+        { parse_mode: "HTML" }
+      );
       return;
     }
-  } else {
-    await ctx.reply("not an option");
-    return;
   }
-  await ctx.reply("Execute? yes OR no", {
-    reply_markup: { force_reply: true },
-  });
-  const execute = await conversation.wait();
-  if (["yes", "y", "Yes", "Y", "YES"].includes(execute.message!.text!)) {
-    const tenderlyUrl = await tenderly.simulate(
-      1,
-      response.tx.from,
+
+  // execute shortcut
+  setTimeout(
+    async () => await ctx.reply("⏳ Executing on a test network..."),
+    1000
+  );
+  try {
+    const { hash, success } = await safe.executeEnsoShortcut(
       response.tx.to,
       response.tx.data,
       response.tx.value
     );
-    await ctx.reply(`executed: ${tenderlyUrl}`);
-  } else {
-    await ctx.reply("cancelled");
+    await ctx.reply(
+      `${
+        success ? "🎉 Success" : "🚨 Failure"
+      }: *${hash}*\n\nTo inspect, search for it here https://dashboard.tenderly.co/shared/fork/1550a58e-3004-49dd-8170-4481f953c9b9/transactions`,
+      { parse_mode: "Markdown" }
+    );
+  } catch (e: any) {
+    console.log("ERROR 🚨", e);
+    if (e.toString().includes("Not enough Ether funds"))
+      await ctx.reply(`🚨 Not enough Ether funds!
+
+Please try /route command again with a lower Ether amount`);
+    else
+      await ctx.reply(`Execution failed!
+
+Please try /route command again`);
+    return;
   }
 }
 
