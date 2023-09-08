@@ -2,9 +2,9 @@
   "name": "defi-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "bot.js",
+  "main": "",
   "scripts": {
-    "bot": "ts-node-dev ./botter.ts"
+    "bot": "ts-node-dev ./src/botter.ts"
   },
   "dependencies": {
     "@grammyjs/conversations": "^1.1.2",
