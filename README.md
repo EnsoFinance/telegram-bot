@@ -15,27 +15,24 @@ You can do native transaction bundling as well, i.e. enter 50 defi positions in 
 Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 
 ## Docs
-
 - [API Docs](https://docs.enso.finance/)
 - [Swagger](https://api.enso.finance/api#/)
 - [Examples Repo](https://github.com/EnsoFinance/shortcuts-api-examples)
 
-## Prerequisites
+## Setup
 1. Fork this repo
 2. Install dependencies with `npm install`
-3. copy .env.example into .env
+3. Copy .env.example into .env
 4. Generate [telegram bot key](https://t.me/BotFather)  
-   1. run `/newbot`  
-   2. input a unique name  
-   3. copy you're API key and put inside of [.env](.env)
+   1. Run `/newbot`  
+   2. Input a unique name  
+   3. Copy you're API key and put inside of [.env](.env)
 5. Start the bot with `npm run bot`
-   1. message your bot `@your_bot_handle`  
-   2. press `/start`  
+6. Send your bot `@your_bot_handle` the message `/help` 
 
 ## Bot commands
-- `/start`: lists all resources and welcome message  
 - `/help`:  command to query information about projects including, protocol list, pool list and apy  
-- `/initialize`  
+- `/start`: lists all resources and welcome message  
 - `/route`: execute swaps, deposits, farming and so forth  
   - `single`: route from 1 token to 1 token  
   - `batch`: route from 1 token to N  
