@@ -78,7 +78,7 @@ export async function getProjects() {
 export async function getPools(project: string) {
   const url = "https://api.enso.finance/api/v1/defiTokens";
 
-  let pools = [["*Pool Name | APY | TVL | Pool Address*"]];
+  let pools = [["Pool Name | APY | TVL | Pool Address"]];
   const response = (await axios.get(`${url}?protocol=${project}`, AUTH_HEADER))
     .data;
   // limit to 50 pools due to telegram message limit.  You can still console.log the full list here before array if you want more details

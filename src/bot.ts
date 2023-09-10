@@ -190,7 +190,7 @@ async function projects(conversation: MyConversation, ctx: MyContext) {
     });
     const project = await conversation.wait();
     const projectPools = await enso.getPools(project.message!.text!);
-    await ctx.reply(projectPools.join("\n"), { parse_mode: "Markdown" });
+    await ctx.reply(projectPools.join("\n"));
   } else if (type.message?.text === "apy") {
     await ctx.reply("Enter pool address:", {
       reply_markup: { force_reply: true },
