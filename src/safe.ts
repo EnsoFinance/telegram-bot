@@ -2,12 +2,11 @@ import dotenv from "dotenv";
 import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
 import { OperationType } from "@safe-global/safe-core-sdk-types";
 import * as ethers from "ethers";
-import { SAFE_OWNER, SAFE_WALLET } from "./constants";
+import { SAFE_OWNER, SAFE_WALLET, TENDERLY_FORK_ID } from "./constants";
 
 dotenv.config();
 
-const TENDERLY_RPC_URL =
-  "https://rpc.tenderly.co/fork/1550a58e-3004-49dd-8170-4481f953c9b9";
+const TENDERLY_RPC_URL = "https://rpc.tenderly.co/fork/" + TENDERLY_FORK_ID;
 
 const PROVIDER = new ethers.providers.JsonRpcProvider(TENDERLY_RPC_URL);
 const SAFE_OWNER_SIGNER = PROVIDER.getSigner(SAFE_OWNER);

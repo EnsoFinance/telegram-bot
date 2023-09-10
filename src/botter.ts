@@ -9,6 +9,7 @@ import {
 import { BigNumber, utils } from "ethers";
 import * as enso from "./enso";
 import * as safe from "./safe";
+import { TENDERLY_FORK_ID } from "./constants";
 
 dotenv.config();
 const { BOT_TOKEN } = process.env;
@@ -155,7 +156,7 @@ Please try /route command again`,
     await ctx.reply(
       `${
         success ? "🎉 Success" : "🚨 Failure"
-      }: *${hash}*\n\nTo inspect, search for it here https://dashboard.tenderly.co/shared/fork/1550a58e-3004-49dd-8170-4481f953c9b9/transactions`,
+      }: *${hash}*\n\nTo inspect, search for it here https://dashboard.tenderly.co/shared/fork/${TENDERLY_FORK_ID}/transactions`,
       { parse_mode: "Markdown" }
     );
   } catch (e: any) {
