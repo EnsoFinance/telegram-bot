@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "bot": "ts-node-dev ./src/botter.ts"
+    "bot": "ts-node-dev ./src/bot.ts"
   },
   "dependencies": {
     "@grammyjs/conversations": "^1.1.2",

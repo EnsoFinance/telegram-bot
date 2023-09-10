@@ -221,7 +221,7 @@ bot.command("help", async (ctx) => {
 
 bot.command("start", async (ctx) => {
   await ctx.reply(
-    "Welcome to the Enso Workshop 🚀, we're happy you're here☺️ \n\n ------Resources------\n  Github: \n API Docs: https://docs.enso.finance/ \n Swagger: https://api.enso.finance/api#/ \n Examples Repo: https://github.com/EnsoFinance/shortcuts-api-examples \n\n ------Assistance------ \n Telegram support: https://t.me/+JcHXYLOMDUo4NWQ0 \n In person: just call us over we don't bite🤓"
+    "Welcome to the Enso Workshop 🚀, we're happy you're here☺️ \n\n ------Resources------\n  Github: \n API Docs: https://docs.enso.finance/ \n Swagger: https://api.enso.finance/api#/ \n Examples Repo: https://github.com/EnsoFinance/shortcuts-api-examples \n\n ------Assistance------ \n just call us over we don't bite🤓"
   );
 });
 
