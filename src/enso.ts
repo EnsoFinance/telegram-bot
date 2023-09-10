@@ -14,10 +14,12 @@ TODO:
 */
 
 export async function getRoute(toToken: string, amountIn: BigNumber) {
+  const url = "https://api.enso.finance/api/v1/shortcuts/route";
+
   try {
     const response = (
       await axios.get(
-        `https://api.enso.finance/api/v1/shortcuts/route?chainId=1&fromAddress=${SAFE_WALLET}&amountIn=${amountIn.toString()}&tokenIn=${ETH}&tokenOut=${toToken}`,
+        `${url}?chainId=1&fromAddress=${SAFE_WALLET}&amountIn=${amountIn.toString()}&tokenIn=${ETH}&tokenOut=${toToken}`,
         AUTH_HEADER
       )
     ).data;
@@ -30,7 +32,8 @@ export async function getRoute(toToken: string, amountIn: BigNumber) {
 }
 
 export async function getRouteBundle(toTokens: string[], amountIn: BigNumber) {
-  const query = `https://api.enso.finance/api/v1/shortcuts/bundle?chainId=1&fromAddress=${SAFE_WALLET}`;
+  const url = "https://api.enso.finance/api/v1/shortcuts/bundle";
+
   const amountSplit = amountIn.div(toTokens.length).toString();
   const data = toTokens.map((token) => ({
     protocol: "enso",
@@ -41,8 +44,15 @@ export async function getRouteBundle(toTokens: string[], amountIn: BigNumber) {
       amountIn: amountSplit,
     },
   }));
+
   try {
-    const response = (await axios.post(query, data, AUTH_HEADER)).data;
+    const response = (
+      await axios.post(
+        `${url}?chainId=1&fromAddress=${SAFE_WALLET}`,
+        data,
+        AUTH_HEADER
+      )
+    ).data;
     console.log("Batch response: ", response);
     return response;
   } catch (e) {
@@ -53,25 +63,24 @@ export async function getRouteBundle(toTokens: string[], amountIn: BigNumber) {
 }
 
 export async function getProjects() {
-  let unparsedArray: string[] = [];
-  const json = await getDefiTokens();
-  for (let i = 0; i < json.length; i++) {
-    unparsedArray.push(json[i].project);
-  }
-  const uniqueProjects = uniqueArray(unparsedArray);
-  return uniqueProjects;
+  const url = "https://api.enso.finance/api/v1/standards";
+
+  let projects: any = [];
+  const standards = (await axios.get(url, AUTH_HEADER)).data;
+  standards.forEach((standard: any) => {
+    if (standard.protocol) projects.push(standard.protocol.slug);
+    if (standard.forks)
+      projects.push(...standard.forks.map((fork: any) => fork.slug));
+  });
+  return projects;
 }
 
-// hacky; no validation of project name exists fyi :)
 export async function getPools(project: string) {
-  var pools = [["Pool Name | APY | TVL | Pool Address"]];
-  const response = (
-    await axios.get(
-      `https://api.enso.finance/api/v1/defiTokens?protocol=${project}`,
-      AUTH_HEADER
-    )
-  ).data;
+  const url = "https://api.enso.finance/api/v1/defiTokens";
 
+  let pools = [["*Pool Name | APY | TVL | Pool Address*"]];
+  const response = (await axios.get(`${url}?protocol=${project}`, AUTH_HEADER))
+    .data;
   // limit to 50 pools due to telegram message limit.  You can still console.log the full list here before array if you want more details
   for (let i = 0; i < (response.length < 50 ? response.length : 50); i++) {
     pools.push([
@@ -85,25 +94,10 @@ export async function getPools(project: string) {
 }
 
 export async function getPoolApy(poolAddress: string) {
-  const url = `https://api.enso.finance/api/v1/defiTokens?tokenAddress=${poolAddress}`;
-  const apy = (await axios.get(url, AUTH_HEADER)).data[0].apy;
+  const url = "https://api.enso.finance/api/v1/defiTokens";
+
+  const apy = (
+    await axios.get(`${url}?tokenAddress=${poolAddress}`, AUTH_HEADER)
+  ).data[0].apy;
   return apy;
-}
-
-export async function getDefiTokens() {
-  const url = `https://api.enso.finance/api/v1/defiTokens`;
-  const tokens = (await axios.get(url, AUTH_HEADER)).data;
-  return tokens;
-}
-
-export async function getDefiBalance(walletAddress: string) {
-  const url = `https://api.enso.finance/api/v1/wallet/balances?chainId=1&eoaAddress=${walletAddress}&tokenType=defiTokens`;
-  const balance = (await axios.get(url, AUTH_HEADER)).data;
-  return balance;
-}
-
-function uniqueArray(unparsedArray: string[]) {
-  return unparsedArray.filter(
-    (value, index, array) => array.indexOf(value) === index
-  );
 }

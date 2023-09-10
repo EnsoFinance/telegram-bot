@@ -189,9 +189,7 @@ async function projects(conversation: MyConversation, ctx: MyContext) {
     });
     const project = await conversation.wait();
     const projectPools = await enso.getPools(project.message!.text!);
-    // console.log(projectPools)
-    // await ctx.reply(projectPools.length.toString())
-    await ctx.reply(projectPools.join("\n"));
+    await ctx.reply(projectPools.join("\n"), { parse_mode: "Markdown" });
   } else if (type.message?.text === "apy") {
     await ctx.reply("Enter pool address:", {
       reply_markup: { force_reply: true },
@@ -222,7 +220,7 @@ bot.command("help", async (ctx) => {
 
 bot.command("start", async (ctx) => {
   await ctx.reply(
-    "Welcome to the ETHWarsaw Enso Workshop 🚀, we're happy you're here☺️ \n\n ------Resources------\n  Github: \n API Docs: https://docs.enso.finance/ \n Swagger: https://api.enso.finance/api#/ \n Examples Repo: https://github.com/EnsoFinance/shortcuts-api-examples \n\n ------Assistance------ \n Telegram support: https://t.me/+JcHXYLOMDUo4NWQ0 \n In person: just call us over we don't bite🤓"
+    "Welcome to the Enso Workshop 🚀, we're happy you're here☺️ \n\n ------Resources------\n  Github: \n API Docs: https://docs.enso.finance/ \n Swagger: https://api.enso.finance/api#/ \n Examples Repo: https://github.com/EnsoFinance/shortcuts-api-examples \n\n ------Assistance------ \n Telegram support: https://t.me/+JcHXYLOMDUo4NWQ0 \n In person: just call us over we don't bite🤓"
   );
 });
 

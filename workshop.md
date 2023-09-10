@@ -1,4 +1,4 @@
-# ETHWarsaw Workshop: DeFi telegram bot 
+# Enso Workshop: DeFi telegram bot 
 Today we will be leveraging the Enso API for building a DeFi telegram information and execution bot.
 
 ## Enso Overview
@@ -43,6 +43,64 @@ Compatible with gnosis safe, and any smart wallet that enables delegatecall..
 ## Challenges
 Let's get going.
 
+### Execution
+
+#### 1. Deposit into DeFi farm
+Add the correct API URL in `getRoute` inside of [./src/enso.ts](./src/enso.ts)  
+```javascript
+export async function getRoute(toToken: string, amountIn: BigNumber) {
+  const url = "XXX";
+
+  try {
+    const response = (
+      await axios.get(
+        `${url}?chainId=1&fromAddress=${SAFE_WALLET}&amountIn=${amountIn.toString()}&tokenIn=${ETH}&tokenOut=${toToken}`,
+        AUTH_HEADER
+      )
+    ).data;
+    console.log("Single response:", response);
+    return response;
+  } catch (e: any) {
+    if (e instanceof AxiosError) throw `Route failed: ${e.response?.data}`;
+    else throw e;
+  }
+}
+```
+
+#### 2. Deposit into many DeFi farms in 1 tx
+Add the correct API URL in `getRouteBundle` inside of [./src/enso.ts](./src/enso.ts)  
+```javascript
+export async function getRouteBundle(toTokens: string[], amountIn: BigNumber) {
+  const url = "XXX";
+
+  const amountSplit = amountIn.div(toTokens.length).toString();
+  const data = toTokens.map((token) => ({
+    protocol: "enso",
+    action: "route",
+    args: {
+      tokenIn: ETH,
+      tokenOut: token,
+      amountIn: amountSplit,
+    },
+  }));
+
+  try {
+    const response = (
+      await axios.post(
+        `${url}?chainId=1&fromAddress=${SAFE_WALLET}`,
+        data,
+        AUTH_HEADER
+      )
+    ).data;
+    console.log("Batch response: ", response);
+    return response;
+  } catch (e) {
+    if (e instanceof AxiosError)
+      throw `Bundle failed: ${JSON.stringify(e.response?.data)}`;
+    else throw e;
+  }
+}
+```
 
 ### Metadata
 ENSO API offers metadata  
@@ -50,71 +108,54 @@ ENSO API offers metadata
 [official docs](https://docs.enso.finance/metadata-api/introduction)  
 
 #### 1. Fetch all projects
-Extend the `getDeFiTokens` inside of [./src/enso.ts](./src/enso.ts)  
+Add the correct API URL in `getProjects` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
-export async function getDefiTokens() {
-    const data = `xxxxxxx`
-    const response = await fetch(data)
-    return await response.json()
+export async function getProjects() {
+  const url = "XXX";
 
+  let projects: any = [];
+  const standards = (await axios.get(url, AUTH_HEADER)).data;
+  standards.forEach((standard: any) => {
+    if (standard.protocol) projects.push(standard.protocol.slug);
+    if (standard.forks)
+      projects.push(...standard.forks.map((fork: any) => fork.slug));
+  });
+  return projects;
+}
 ```
 
 #### 2. Fetch pools related to a project
-Extend the `getPools` inside of [./src/enso.ts](./src/enso.ts)  
+Add the correct API URL in `getPools` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getPools(project: string) {
-    var pools = [['Pool Name | APY | TVL | Pool Address']]
-    const data = `xxxx`
-    const json = await (await fetch(data)).json()
-    
-    // limit to 50 pools due to telegram message limit.  You can still console.log the full list here before array if you want more details
-    for (let i = 0; i < 50; i++) {
-        pools.push([json[i].subtitle, json[i].apy, json[i].tvl, json[i].poolAddress])
-    }    
-    return pools
+  const url = "XXX";
+
+  let pools = [["*Pool Name | APY | TVL | Pool Address*"]];
+  const response = (await axios.get(`${url}?protocol=${project}`, AUTH_HEADER))
+    .data;
+  // limit to 50 pools due to telegram message limit.  You can still console.log the full list here before array if you want more details
+  for (let i = 0; i < (response.length < 50 ? response.length : 50); i++) {
+    pools.push([
+      response[i].subtitle,
+      response[i].apy,
+      response[i].tvl,
+      response[i].poolAddress,
+    ]);
+  }
+  return pools;
 }
 ```
 
 #### 3. Fetch APY related to a specific pool
-Extend the `getPoolApy` inside of [./src/enso.ts](./src/enso.ts)  
+Add the correct API URL in `getPoolApy` inside of [./src/enso.ts](./src/enso.ts)  
 ```javascript
 export async function getPoolApy(poolAddress: string) {
-    const data = `xxxx`
-    const response = await fetch(data)
-    const apy = (await response.json())[0].apy
-    return apy
-}
-```
+  const url = "XXX";
 
-#### 4. Fetch balance of wallet
-ENSO API offers execution known as `shortcuts`  
-[swagger](https://api.enso.finance/api#/)  
-[official docs: router](https://docs.enso.finance/router-api/introduction)  
-[official docs: bundle](https://docs.enso.finance/bundler-api/introduction)  
-
-### Execution
-
-#### 1. Deposit into DeFi farm
-Extend the `getRoute` inside of [./src/enso.ts](./src/enso.ts)  
-```javascript
-export async function getRoute(tokenIn: string, toToken: string, amountIn: number){
-    const query = `xxxx`
-    const response = await fetch(query)
-    return await response.json()
-}
-```
-
-#### 2. Deposit into many DeFi farms in 1 tx
-Extend the `getRouteBundle` inside of [./src/enso.ts](./src/enso.ts)  
-```javascript
-export async function getRouteBundle(tokenIn: string, toToken: string[], amountIn: number) {
-    const query = `xxx`
-    const amountSplit = (amountIn / toToken.length).toString()
-    var data = 
-    [   
-        {
-        }
-    ]
+  const apy = (
+    await axios.get(`${url}?tokenAddress=${poolAddress}`, AUTH_HEADER)
+  ).data[0].apy;
+  return apy;
 }
 ```
 
